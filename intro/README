@@ -1,0 +1,4 @@
+This code was borrowed from the pages.cs.wisc.edu/~remzi/OSTEP/ book
+
+To compile the mem.c code type
+cc -o mem mem.c -Wl,-no_pie
