@@ -1,6 +1,8 @@
 # Process
 
-This is an assembly hellow world for macOS (from https://lord.io/blog/2014/assembly-on-osx/)
+Code here is based on OSTEP book and xv6 manuals
+
+The assembly code works for macOS (from https://lord.io/blog/2014/assembly-on-osx/)
 
 To assemble your code, run:
 # Generate object file from assembly:
