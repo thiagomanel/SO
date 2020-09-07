@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+//cc -o mem mem.c -Wl,-no_pie
+
 int main(int argc, char *argv[]) {
     int *p = malloc(sizeof(int)); // a1
     printf("(%d) address pointed to by p: %p\n",
