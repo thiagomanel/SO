@@ -5,7 +5,6 @@
 #include <stdbool.h>
 
 size_t wc(const char *string) {
-
     size_t count = 0;
 
     for (bool inword = false; *string; ++string) {
@@ -46,7 +45,6 @@ size_t wc_file(const char *filename) {
 }
 
 size_t wc_dir(const char *root_path){
-
     DIR* root_dir;
     struct dirent *ent;
     char filepath [1024];//unsafe
