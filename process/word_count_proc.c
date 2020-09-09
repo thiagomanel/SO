@@ -4,11 +4,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-size_t wc(const char *string) {
+size_t wc(const char *content) {
     size_t count = 0;
 
-    for (bool inword = false; *string; ++string) {
-        if (isspace(*string)) {
+    for (bool inword = false; *content; ++content) {
+        if (isspace(*content)) {
             if (inword) {
                 inword = false;
             }
