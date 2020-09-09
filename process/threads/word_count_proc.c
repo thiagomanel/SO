@@ -1,5 +1,6 @@
 #include <ctype.h>
 #include <stdio.h>
+#include <dirent.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -44,8 +45,32 @@ size_t wc_file(const char *filename) {
     return -1;
 }
 
-int main(void) {
-    char * data = " manel   manel";
-    printf("%zu\n", wc(data));
+size_t wc_dir(const char *root_path){
+
+    DIR* root_dir;
+    struct dirent *ent;
+    char filepath [1024];//unsafe
+
+    size_t count = 0;
+
+    root_dir = opendir(root_path);
+
+    if (root_dir) {
+        while ((ent = readdir(root_dir)) != NULL) {
+            if (ent->d_type == DT_REG) {//if is regular file
+                sprintf(filepath, "%s/%s", root_path, ent->d_name);
+                count += wc_file(filepath);
+            }
+        }
+        closedir(root_dir);
+
+        return count;
+    }
+
+    return -1;
+}
+
+int main(int argc, char* argv[argc + 1]) {
+    printf("%zu\n", wc_dir(argv[1]));
     return EXIT_SUCCESS;
 }
