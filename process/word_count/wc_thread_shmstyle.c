@@ -8,7 +8,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define SHM_FILE "/tmp/shm_wc"
 #define MAX_ANSWERS 1024
 
 // the processes will share this Response on the shared memory
@@ -35,8 +34,8 @@ size_t wc(const char *content) {
 }
 
 size_t wc_file(const char *filename) {
-  char *file_content = 0; // how to init? 0 or null?
-  long length;            // what is the modern typ?
+  char *file_content = 0;
+  long length;
 
   FILE *f = fopen(filename, "rb");
 
