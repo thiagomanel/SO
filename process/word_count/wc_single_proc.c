@@ -26,8 +26,8 @@ size_t wc(const char *content) {
 }
 
 size_t wc_file(const char *filename) {
-  char *file_content = 0; // how to init? 0 or null?
-  long length;            // what is the modern typ?
+  char *file_content = 0;
+  long length;
 
   FILE *f = fopen(filename, "rb");
 
@@ -35,12 +35,14 @@ size_t wc_file(const char *filename) {
     fseek(f, 0, SEEK_END);
     length = ftell(f);
     fseek(f, 0, SEEK_SET);
+    // put the whole file into the memory (beware)
     file_content = malloc(length);
     if (file_content) {
       fread(file_content, 1, length, f);
     }
     fclose(f);
 
+    // count word from this buffer
     return wc(file_content);
   }
 
@@ -59,9 +61,8 @@ size_t wc_dir(const char *dir_path) {
 
   dir = opendir(dir_path);
   if (dir) {
-    // printf("pid %d dir %s\n", getpid(), root_path);
     while ((ent = readdir(dir)) != NULL) {
-      if (ent->d_type == DT_REG) { // if is regular file
+      if (ent->d_type == DT_REG) { // if it is regular file
         sprintf(filepath, "%s/%s", dir_path, ent->d_name);
         count += wc_file(filepath);
       }
@@ -97,18 +98,18 @@ int main(int argc, char *argv[argc + 1]) {
   root_dir = opendir(root_path);
 
   if (root_dir) {
-    // printf("pid %d dir %s\n", getpid(), root_path);
     while ((ent = readdir(root_dir)) != NULL) {
       if (ent->d_type == DT_DIR) {
         if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0) {
           sprintf(filepath, "%s/%s", root_path, ent->d_name);
+          // sums the subdir total
           count += wc_dir(filepath);
-          printf("%zu\n", count);
         }
       }
     }
     closedir(root_dir);
   }
 
+  printf("%zu\n", count);
   return EXIT_SUCCESS;
 }
