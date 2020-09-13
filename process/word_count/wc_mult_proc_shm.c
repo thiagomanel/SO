@@ -69,7 +69,6 @@ size_t wc_dir(const char *dir_path) {
 
   dir = opendir(dir_path);
   if (dir) {
-    // printf("pid %d dir %s\n", getpid(), root_path);
     while ((ent = readdir(dir)) != NULL) {
       if (ent->d_type == DT_REG) { // if is regular file
         sprintf(filepath, "%s/%s", dir_path, ent->d_name);
