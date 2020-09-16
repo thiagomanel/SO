@@ -83,7 +83,7 @@ void *wc_dir(void *t) {
 	while (TURN != thread_id)
            ;
         WC_COUNT += count;
-	if (++TURN == N_THREADS) TURN = 0;
+        if (++TURN == N_THREADS) TURN = 0;
       }
     }
   }
@@ -115,7 +115,7 @@ int main(int argc, char *argv[argc + 1]) {
   WC_COUNT = 0;
   TURN = MAX_ANSWERS + 1;
 
-  size_t N_THREADS = 0;
+  N_THREADS = 0;
   pthread_t threads[MAX_ANSWERS];
   struct thread_param params[MAX_ANSWERS];
 
