@@ -7,6 +7,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <semaphore.h>
 
 #define MAX_ANSWERS 1024
 
@@ -14,6 +15,7 @@ struct thread_param {
   char *dir_path;
 };
 
+sem_t mutex;
 size_t WC_COUNT;
 
 size_t wc(const char *content) {
@@ -72,7 +74,9 @@ void *wc_dir(void *t) {
       if (ent->d_type == DT_REG) { // if is regular file
         filepath = malloc(strlen(dir_path) + strlen(ent->d_name) + 2);
         sprintf(filepath, "%s/%s", dir_path, ent->d_name);
+        sem_wait(&mutex);
         WC_COUNT += wc_file(filepath);
+        sem_post(&mutex);
         free(filepath);
       }
     }
@@ -100,7 +104,8 @@ int main(int argc, char *argv[argc + 1]) {
   struct dirent *ent;
   char *filepath[MAX_ANSWERS];
   char *root_path = argv[1];
-
+    
+  //sem_init(&mutex, 0, 1);
   WC_COUNT = 0;
 
   size_t n_threads = 0;
@@ -128,6 +133,7 @@ int main(int argc, char *argv[argc + 1]) {
     pthread_join(threads[i], NULL);
   }
 
+  //sem_destroy(&mutex);
   printf("%zu\n", WC_COUNT);
   pthread_exit(NULL);
 }

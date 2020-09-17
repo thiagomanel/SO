@@ -11,10 +11,13 @@
 #define MAX_ANSWERS 1024
 
 struct thread_param {
+  size_t thread_id;
   char *dir_path;
 };
 
 size_t WC_COUNT;
+size_t TURN;
+size_t n_threads;
 
 size_t wc(const char *content) {
   size_t count = 0;
@@ -61,10 +64,12 @@ size_t wc_file(const char *filename) {
 void *wc_dir(void *t) {
   struct thread_param *param = (struct thread_param*) t;
   char *dir_path = param->dir_path;
+  size_t thread_id = param->thread_id;
 
   DIR *dir;
   struct dirent *ent;
   char *filepath;
+  size_t count;
 
   dir = opendir(dir_path);
   if (dir) {
@@ -72,8 +77,12 @@ void *wc_dir(void *t) {
       if (ent->d_type == DT_REG) { // if is regular file
         filepath = malloc(strlen(dir_path) + strlen(ent->d_name) + 2);
         sprintf(filepath, "%s/%s", dir_path, ent->d_name);
-        WC_COUNT += wc_file(filepath);
+        count = wc_file(filepath);
         free(filepath);
+        while (TURN != thread_id)
+           ;
+        WC_COUNT += count;
+        if (++TURN == n_threads) TURN = 0;
       }
     }
   }
@@ -102,8 +111,9 @@ int main(int argc, char *argv[argc + 1]) {
   char *root_path = argv[1];
 
   WC_COUNT = 0;
+  TURN = 0;
+  n_threads = 0;
 
-  size_t n_threads = 0;
   pthread_t threads[MAX_ANSWERS];
   struct thread_param params[MAX_ANSWERS];
 
@@ -116,6 +126,7 @@ int main(int argc, char *argv[argc + 1]) {
           filepath[n_threads] = malloc(strlen(root_path) + strlen(ent->d_name) + 2);
           sprintf(filepath[n_threads], "%s/%s", root_path, ent->d_name);
           params[n_threads].dir_path = filepath[n_threads];
+          params[n_threads].thread_id = n_threads;
           pthread_create(&threads[n_threads], NULL, wc_dir, (void *)&params[n_threads]);
           n_threads++;
         }

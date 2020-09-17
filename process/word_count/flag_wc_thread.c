@@ -15,6 +15,7 @@ struct thread_param {
 };
 
 size_t WC_COUNT;
+bool flag;
 
 size_t wc(const char *content) {
   size_t count = 0;
@@ -72,7 +73,11 @@ void *wc_dir(void *t) {
       if (ent->d_type == DT_REG) { // if is regular file
         filepath = malloc(strlen(dir_path) + strlen(ent->d_name) + 2);
         sprintf(filepath, "%s/%s", dir_path, ent->d_name);
+        while (flag)
+            ;
+        flag = true;
         WC_COUNT += wc_file(filepath);
+        flag = false;
         free(filepath);
       }
     }
@@ -102,7 +107,8 @@ int main(int argc, char *argv[argc + 1]) {
   char *root_path = argv[1];
 
   WC_COUNT = 0;
-
+  flag = false;
+    
   size_t n_threads = 0;
   pthread_t threads[MAX_ANSWERS];
   struct thread_param params[MAX_ANSWERS];
