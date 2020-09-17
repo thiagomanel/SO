@@ -105,7 +105,7 @@ int main(int argc, char *argv[argc + 1]) {
   char *filepath[MAX_ANSWERS];
   char *root_path = argv[1];
     
-  //sem_init(&mutex, 0, 1);
+  sem_init(&mutex, 0, 1);
   WC_COUNT = 0;
 
   size_t n_threads = 0;
@@ -133,7 +133,7 @@ int main(int argc, char *argv[argc + 1]) {
     pthread_join(threads[i], NULL);
   }
 
-  //sem_destroy(&mutex);
+  sem_destroy(&mutex);
   printf("%zu\n", WC_COUNT);
   pthread_exit(NULL);
 }
