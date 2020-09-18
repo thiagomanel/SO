@@ -3,7 +3,6 @@
 all: wc_single_proc wc_mult_proc wc_mult_procv_shm wc_thread_shmstyle wc_thread flag_wc_thread turn_wc_thread tsl_wc_thread sem_wc_thread sem2_wc_thread
 
 FLAGS=-Wall      \
-      -masm=intel \
       -pthread \
       -pedantic
 

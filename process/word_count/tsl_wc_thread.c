@@ -24,7 +24,7 @@ struct thread_param {
 size_t WC_COUNT;
 
 void enter_region() {
-    __asm(
+    asm(
         ".data\n\t"
         "lock:\n\t"
         ".byte 0\n\t"
@@ -40,7 +40,7 @@ void enter_region() {
 }
 
 void leave_region() {
-    __asm("movb $0, (lock)");
+    asm("movb $0, (lock)");
 }
 
 size_t wc(const char *content) {
