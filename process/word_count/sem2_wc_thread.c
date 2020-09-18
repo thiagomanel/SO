@@ -7,6 +7,8 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <fcntl.h>           
+#include <sys/stat.h>
 #include <semaphore.h>
 
 #define MAX_ANSWERS 1024
