@@ -69,6 +69,7 @@ void *wc_dir(void *t) {
   DIR *dir;
   struct dirent *ent;
   char *filepath;
+  size_t count = 0;
 
   dir = opendir(dir_path);
   if (dir) {
@@ -76,10 +77,11 @@ void *wc_dir(void *t) {
       if (ent->d_type == DT_REG) { // if is regular file
         filepath = malloc(strlen(dir_path) + strlen(ent->d_name) + 2);
         sprintf(filepath, "%s/%s", dir_path, ent->d_name);
+        count = wc_file(filepath);
+        free(filepath);
         while (TURN != thread_id)
            ;
-        WC_COUNT += wc_file(filepath);
-        free(filepath);
+        WC_COUNT += count;
         if (++TURN == n_threads) TURN = 0;
       }
     }
