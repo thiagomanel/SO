@@ -1,10 +1,3 @@
-//
-//  tsl_wc_thread.c
-//  
-//
-//  Created by Francisco Brasileiro on 17/09/20.
-//
-
 #include <ctype.h>
 #include <dirent.h>
 #include <pthread.h>
@@ -18,7 +11,7 @@
 #define MAX_ANSWERS 1024
 
 struct thread_param {
-    char *dir_path;
+  char *dir_path;
 };
 
 size_t WC_COUNT;
@@ -44,73 +37,71 @@ void leave_region() {
 }
 
 size_t wc(const char *content) {
-    size_t count = 0;
-    
-    for (bool inword = false; *content; ++content) {
-        if (isspace(*content)) {
-            if (inword) {
-                inword = false;
-            }
-        } else {
-            if (!inword) {
-                inword = true;
-                ++count;
-            }
-        }
+  size_t count = 0;
+
+  for (bool inword = false; *content; ++content) {
+    if (isspace(*content)) {
+      if (inword) {
+        inword = false;
+      }
+    } else {
+      if (!inword) {
+        inword = true;
+        ++count;
+      }
     }
-    return count;
+  }
+  return count;
 }
 
 size_t wc_file(const char *filename) {
-    char *file_content = NULL;
-    long length;
-    
-    FILE *f = fopen(filename, "rb");
-    
-    if (f) {
-        fseek(f, 0, SEEK_END);
-        length = ftell(f);
-        fseek(f, 0, SEEK_SET);
-        file_content = malloc(length);
-        if (file_content) {
-            fread(file_content, 1, length, f);
-        }
-        fclose(f);
-        
-        return wc(file_content);
+  char *file_content = NULL;
+  long length;
+
+  FILE *f = fopen(filename, "rb");
+
+  if (f) {
+    fseek(f, 0, SEEK_END);
+    length = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    file_content = malloc(length);
+    if (file_content) {
+      fread(file_content, 1, length, f);
     }
-    
-    return -1;
+    fclose(f);
+
+    return wc(file_content);
+  }
+
+  return -1;
 }
 
 // count words in file within dir_path
 // we do not walk in subdirs
 void *wc_dir(void *t) {
-    struct thread_param *param = (struct thread_param*) t;
-    char *dir_path = param->dir_path;
-    
-    DIR *dir;
-    struct dirent *ent;
-    char *filepath;
-    size_t count;
-    
-    dir = opendir(dir_path);
-    if (dir) {
-        while ((ent = readdir(dir)) != NULL) {
-            if (ent->d_type == DT_REG) { // if is regular file
-                filepath = malloc(strlen(dir_path) + strlen(ent->d_name) + 2);
-                sprintf(filepath, "%s/%s", dir_path, ent->d_name);
-                count = wc_file(filepath);
-                enter_region();
-                WC_COUNT += count;
-                leave_region();
-                free(filepath);
-            }
-        }
+  struct thread_param *param = (struct thread_param*) t;
+  char *dir_path = param->dir_path;
+
+  DIR *dir;
+  struct dirent *ent;
+  char *filepath;
+
+  dir = opendir(dir_path);
+  if (dir) {
+    while ((ent = readdir(dir)) != NULL) {
+      if (ent->d_type == DT_REG) { // if is regular file
+        filepath = malloc(strlen(dir_path) + strlen(ent->d_name) + 2);
+        sprintf(filepath, "%s/%s", dir_path, ent->d_name);
+        enter_region();
+        WC_COUNT += wc_file(filepath);
+        leave_region();
+        free(filepath);
+      }
     }
-    closedir(dir);
-    
-    pthread_exit(NULL);
+  }
+  closedir(dir);
+
+  pthread_exit(NULL);
 }
 
 // it calculates the number of words in files
@@ -127,38 +118,38 @@ void *wc_dir(void *t) {
 //       |-- ...
 //       |-- subdir-3
 int main(int argc, char *argv[argc + 1]) {
-    DIR *root_dir;
-    struct dirent *ent;
-    char *filepath[MAX_ANSWERS];
-    char *root_path = argv[1];
-    
-    WC_COUNT = 0;
-    
-    size_t n_threads = 0;
-    pthread_t threads[MAX_ANSWERS];
-    struct thread_param params[MAX_ANSWERS];
-    
-    root_dir = opendir(root_path);
-    
-    if (root_dir) {
-        while ((ent = readdir(root_dir)) != NULL) {
-            if (ent->d_type == DT_DIR) {
-                if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0) {
-                    filepath[n_threads] = malloc(strlen(root_path) + strlen(ent->d_name) + 2);
-                    sprintf(filepath[n_threads], "%s/%s", root_path, ent->d_name);
-                    params[n_threads].dir_path = filepath[n_threads];
-                    pthread_create(&threads[n_threads], NULL, wc_dir, (void *)&params[n_threads]);
-                    n_threads++;
-                }
-            }
+  DIR *root_dir;
+  struct dirent *ent;
+  char *filepath[MAX_ANSWERS];
+  char *root_path = argv[1];
+
+  WC_COUNT = 0;
+
+  size_t n_threads = 0;
+  pthread_t threads[MAX_ANSWERS];
+  struct thread_param params[MAX_ANSWERS];
+
+  root_dir = opendir(root_path);
+
+  if (root_dir) {
+    while ((ent = readdir(root_dir)) != NULL) {
+      if (ent->d_type == DT_DIR) {
+        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0) {
+          filepath[n_threads] = malloc(strlen(root_path) + strlen(ent->d_name) + 2);
+          sprintf(filepath[n_threads], "%s/%s", root_path, ent->d_name);
+          params[n_threads].dir_path = filepath[n_threads];
+          pthread_create(&threads[n_threads], NULL, wc_dir, (void *)&params[n_threads]);
+          n_threads++;
         }
-        closedir(root_dir);
+      }
     }
-    
-    for (size_t i = 0; i < n_threads; i++) {
-        pthread_join(threads[i], NULL);
-    }
-    
-    printf("%zu\n", WC_COUNT);
-    pthread_exit(NULL);
+    closedir(root_dir);
+  }
+
+  for (size_t i = 0; i < n_threads; i++) {
+    pthread_join(threads[i], NULL);
+  }
+
+  printf("%zu\n", WC_COUNT);
+  pthread_exit(NULL);
 }
