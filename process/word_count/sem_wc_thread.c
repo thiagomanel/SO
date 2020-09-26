@@ -7,7 +7,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <fcntl.h>
+#include <fcntl.h>           
 #include <sys/stat.h>
 #include <semaphore.h>
 
@@ -69,6 +69,7 @@ void *wc_dir(void *t) {
   DIR *dir;
   struct dirent *ent;
   char *filepath;
+  size_t count;
 
   dir = opendir(dir_path);
   if (dir) {
@@ -76,8 +77,9 @@ void *wc_dir(void *t) {
       if (ent->d_type == DT_REG) { // if is regular file
         filepath = malloc(strlen(dir_path) + strlen(ent->d_name) + 2);
         sprintf(filepath, "%s/%s", dir_path, ent->d_name);
+        count = wc_file(filepath);
         sem_wait(mutex);
-        WC_COUNT += wc_file(filepath);
+        WC_COUNT += count;
         sem_post(mutex);
         free(filepath);
       }
