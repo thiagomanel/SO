@@ -7,7 +7,7 @@ public class SharedBoundedStackSemaphoreBugged implements SharedBoundedStack {
     private int stackSize;
     // shared buffer
     private int[] stack;
-    // points to the top of the stack; -1 means that the stack is empty
+    // points to the top of the stack; 0 means that the stack is empty
     private int stackPointer;
     // "mutex" ensures that access to the shared stack does not lead to a race condition
     private Semaphore mutex;
@@ -19,7 +19,7 @@ public class SharedBoundedStackSemaphoreBugged implements SharedBoundedStack {
     public SharedBoundedStackSemaphoreBugged(int stackSize) {
         this.stackSize = stackSize;
         this.stack = new int[this.stackSize];
-        this.stackPointer = -1;
+        this.stackPointer = 0;
         this.mutex = new Semaphore(1);
         this.empty = new Semaphore(0);
         this.full = new Semaphore(this.stackSize);
@@ -46,9 +46,8 @@ public class SharedBoundedStackSemaphoreBugged implements SharedBoundedStack {
             System.out.println("InterruptedException caught");
         }
 
-        ret = this.stack[this.stackPointer];
+        ret = this.stack[--this.stackPointer];
         System.out.println(String.format("Consumer has removed %d from slot %d", ret, this.stackPointer));
-        this.stackPointer--;
 
         // After a consumer consumes an item, it releases mutex to allow others to enter the critical region
         this.mutex.release();
@@ -76,8 +75,8 @@ public class SharedBoundedStackSemaphoreBugged implements SharedBoundedStack {
             System.out.println("InterruptedException caught");
         }
 
-        this.stack[++this.stackPointer] = item;
         System.out.println(String.format("Producer has inserted %d in slot %d", item, this.stackPointer));
+        this.stack[this.stackPointer++] = item;
 
         // After a producer produces an item, it releases mutex to allow others to enter the critical region
         this.mutex.release();

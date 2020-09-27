@@ -20,7 +20,7 @@ public class OtherProducer implements Runnable {
         int i = 1;
         while (true) {
             synchronized (this.full) {
-                while (this.buffer.getStackPointer() == (this.buffer.getStackSize() - 1)) {
+                while (this.buffer.getStackPointer() == this.buffer.getStackSize()) {
                     try {
                         this.full.wait();
                     } catch (InterruptedException e) {

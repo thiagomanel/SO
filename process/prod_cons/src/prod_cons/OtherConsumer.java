@@ -20,7 +20,7 @@ public class OtherConsumer implements Runnable {
         int item;
         while(true) {
             synchronized (this.empty) {
-                while (this.buffer.getStackPointer() == -1) {
+                while (this.buffer.getStackPointer() == 0) {
                     try {
                         this.empty.wait();
                     } catch (InterruptedException e) {

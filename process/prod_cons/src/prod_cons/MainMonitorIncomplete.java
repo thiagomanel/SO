@@ -1,7 +1,7 @@
 package prod_cons;
 
 public class MainMonitorIncomplete {
-    private static int bufferSize = 10;
+    private static int bufferSize = 5;
     private static int producerServiceTime = 500;
     private static int consumerServiceTime = 100;
 

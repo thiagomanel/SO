@@ -5,13 +5,13 @@ public class SharedBoundedStackMonitor implements SharedBoundedStack {
     private int stackSize;
     // shared buffer
     private int[] stack;
-    // points to the top of the stack; -1 means that the stack is empty
+    // points to the top of the stack; 0 means that the stack is empty
     private int stackPointer;
 
     public SharedBoundedStackMonitor(int stackSize) {
         this.stackSize = stackSize;
         this.stack = new int[this.stackSize];
-        this.stackPointer = -1;
+        this.stackPointer = 0;
     }
 
     synchronized public int getStackPointer() {
@@ -27,9 +27,8 @@ public class SharedBoundedStackMonitor implements SharedBoundedStack {
     {
         int ret;
 
-        ret = this.stack[this.stackPointer];
+        ret = this.stack[--this.stackPointer];
         System.out.println(String.format("Consumer has removed %d from slot %d", ret, this.stackPointer));
-        this.stackPointer--;
 
         return ret;
     }
@@ -37,7 +36,7 @@ public class SharedBoundedStackMonitor implements SharedBoundedStack {
     // to put an item in buffer
     synchronized public void put(int item)
     {
-        this.stack[++this.stackPointer] = item;
         System.out.println(String.format("Producer has inserted %d in slot %d", item, this.stackPointer));
+        this.stack[this.stackPointer++] = item;
     }
 }

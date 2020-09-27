@@ -1,9 +1,9 @@
 package prod_cons;
 
 public class MainMonitor {
-    private static int bufferSize = 10;
+    private static int bufferSize = 5;
     private static int producerServiceTime = 100;
-    private static int consumerServiceTime = 500;
+    private static int consumerServiceTime = 100;
 
     public static void main(String[] args) {
 	// write your code here

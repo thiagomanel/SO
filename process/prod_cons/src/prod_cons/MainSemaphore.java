@@ -1,7 +1,7 @@
 package prod_cons;
 
 public class MainSemaphore {
-    private static int bufferSize = 10;
+    private static int bufferSize = 5;
     private static int producerServiceTime = 100;
     private static int consumerServiceTime = 100;
 
