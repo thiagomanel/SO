@@ -1,10 +1,10 @@
-package prod_cons.semaphore;
+package prod_cons;
 
 public class Consumer implements Runnable {
-    private SharedBuffer buffer;
+    private SharedBoundedStack buffer;
     private int serviceTime;
 
-    Consumer(SharedBuffer b, int serviceTime)
+    Consumer(SharedBoundedStack b, int serviceTime)
     {
         this.buffer = b;
         this.serviceTime = serviceTime;

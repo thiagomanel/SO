@@ -1,10 +1,10 @@
-package prod_cons.semaphore;
+package prod_cons;
 
 public class Producer implements Runnable {
-    private SharedBuffer buffer;
+    private SharedBoundedStack buffer;
     private int serviceTime;
 
-    Producer(SharedBuffer b, int serviceTime)
+    Producer(SharedBoundedStack b, int serviceTime)
     {
         this.buffer = b;
         this.serviceTime = serviceTime;

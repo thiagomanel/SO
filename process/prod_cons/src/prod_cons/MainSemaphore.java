@@ -1,6 +1,6 @@
-package prod_cons.semaphore;
+package prod_cons;
 
-public class Main {
+public class MainSemaphore {
     private static int bufferSize = 10;
     private static int producerServiceTime = 100;
     private static int consumerServiceTime = 100;
@@ -8,12 +8,12 @@ public class Main {
     public static void main(String[] args) {
 	// write your code here
         // creating buffer queue
-        SharedBuffer buffer = new SharedBuffer(Main.bufferSize);
+        SharedBoundedStack buffer = new SharedBoundedStackSemaphore(MainSemaphore.bufferSize);
 
         // starting consumer thread
-        new Consumer(buffer, Main.consumerServiceTime);
+        new Consumer(buffer, MainSemaphore.consumerServiceTime);
 
         // starting producer thread
-        new Producer(buffer, Main.producerServiceTime);
+        new Producer(buffer, MainSemaphore.producerServiceTime);
     }
 }
