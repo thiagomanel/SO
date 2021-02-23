@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-int main(int arrc, char** argv) {
+int main(int argc, char** argv) {
 	char estado = 'p';
     	int child_pid;
 
