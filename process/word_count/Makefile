@@ -28,10 +28,10 @@ turn_wc_thread: turn_wc_thread.c
 	gcc $(FLAGS) -o turn_wc_thread turn_wc_thread.c
 
 tsl_wc_thread: tsl_wc_thread.c
-	gcc $(FLAGS) -o tsl_wc_thread tsl_wc_thread.c
+	gcc $(FLAGS) -no-pie -o tsl_wc_thread tsl_wc_thread.c
 
 longer_tsl_wc_thread: longer_tsl_wc_thread.c
-	gcc $(FLAGS) -o longer_tsl_wc_thread longer_tsl_wc_thread.c
+	gcc $(FLAGS) -o -no-pie longer_tsl_wc_thread longer_tsl_wc_thread.c
 
 sem_wc_thread: sem_wc_thread.c
 	gcc $(FLAGS) -o sem_wc_thread sem_wc_thread.c
